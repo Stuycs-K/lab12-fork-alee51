@@ -19,17 +19,41 @@ int rand_int(int *buff, int n) {
     return *buff;
 }
 int main() {
-    pid_t p;
-    p = fork();
+    printf("%d about to create 2 child processes\n", getpid());
+    pid_t p = fork();
     if (p == -1){
         perror("fork fail"); //output to stderr instead of stdout
         err();
     }
-    else if (p == 0){
-        printf("Hello from Child!\n");
+    else if (p == 0){ //child
+        unsigned int x0;
+        rand_int(&x0, 4);
+        int x = x0 % 5 + 1;
+        printf("%d %d sec\n", getpid(), x);
+        sleep(x);
+        printf("%d finished after %d sec\n", getpid(), x);
+        return x;
     } 
     else {
-        printf("%d about to create 2 child processes\n", getpid());
+        pid_t c = fork();
+        if (c == -1){
+            perror("fork fail"); //output to stderr instead of stdout
+            err();
+        }
+        else if (c == 0){ //child
+            unsigned int y0;
+            rand_int(&y0, 4);
+            int y = y0 % 5 + 1;
+            printf("%d %d sec\n", getpid(), y);
+            sleep(y);
+            printf("%d finished after %d sec\n", getpid(), y);
+            return y;
+        } 
+        else {
+            int status;
+            wait(&status);
+            printf("Main Process %d is done. Child %d slept for %d sec\n", getpid(), c, WEXITSTATUS(status));
+        }
     }
     
 }
