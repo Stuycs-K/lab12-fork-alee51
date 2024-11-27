@@ -51,8 +51,8 @@ int main() {
         } 
         else {
             int status;
-            wait(&status);
-            printf("Main Process %d is done. Child %d slept for %d sec\n", getpid(), c, WEXITSTATUS(status));
+            int exited = wait(&status);
+            printf("Main Process %d is done. Child %d slept for %d sec\n", getpid(), exited, WEXITSTATUS(status));
         }
     }
     
